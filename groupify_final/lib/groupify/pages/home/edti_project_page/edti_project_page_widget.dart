@@ -24,8 +24,8 @@ class _EdtiProjectPageWidgetState extends State<EdtiProjectPageWidget> { // Clas
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   // Variables to hold new edited values
-  String? newDue = ''; 
-  String? newDescription = '';
+  String? newDue; 
+  String? newDescription;
   final Projects_BO _projectsBO = Projects_BO(); // ProjectBO to have access to project queries
 
   @override
@@ -38,6 +38,10 @@ class _EdtiProjectPageWidgetState extends State<EdtiProjectPageWidget> { // Clas
     _model.projectNameFocusNode ??= FocusNode();
     _model.projectDescriptionController ??= TextEditingController(text: widget.pDescription); // Show previous descr. 
     _model.projectDescriptionFocusNode ??= FocusNode();
+
+    // Assign old values to new ones at the start in case they are not edited. 
+    newDue = widget.pDue;
+    newDescription = widget.pDescription;
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
   }
 

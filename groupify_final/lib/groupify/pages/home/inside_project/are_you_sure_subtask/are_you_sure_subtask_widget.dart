@@ -113,7 +113,8 @@ Future<void> _deleteSubTask(String? projectName, String? pOwnerID, String? tName
                 children: [
                   FFButtonWidget(
                     onPressed: () async {
-                      _deleteSubTask(widget.projectName, widget.pOwnerId, widget.tName, widget.stName);
+                      await _deleteSubTask(widget.projectName, widget.pOwnerId, widget.tName, widget.stName);
+                      await _sqldatabaseHelper.closeConnection();
                       context.pushNamed('ProjectPage', queryParameters: {
                                   'projectOwnerID': widget.pOwnerId,
                                   'projectName': widget.projectName,
@@ -148,6 +149,7 @@ Future<void> _deleteSubTask(String? projectName, String? pOwnerID, String? tName
                   ),
                   FFButtonWidget(
                     onPressed: () async {
+                      await _sqldatabaseHelper.closeConnection();
                       context.safePop();
                     },
                     text: FFLocalizations.of(context).getText(

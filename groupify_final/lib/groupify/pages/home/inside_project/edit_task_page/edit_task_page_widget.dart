@@ -10,7 +10,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'edit_task_page_model.dart';
 export 'edit_task_page_model.dart';
 import 'package:groupify_final/sql_database_connection.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 
 class EditTaskPageWidget extends StatefulWidget {
   final String? projectName;
@@ -233,6 +232,7 @@ final String newtDescription = _model.taskDescriptionController.text;
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
+                                                  await _sqldatabaseHelper.closeConnection();
                                                   context
                                                       .pushNamed('ProjectPage', queryParameters: {
                                                       'projectOwnerID': widget.pOwnerId,
@@ -531,7 +531,8 @@ final String newtDescription = _model.taskDescriptionController.text;
                           alignment: const AlignmentDirectional(0.0, 0.0),
                           child: FFButtonWidget(
                             onPressed: () async {
-                              _updateTask2();
+                              await _updateTask2();
+                              await _sqldatabaseHelper.closeConnection();
                               context.pushNamed('ProjectPage', queryParameters: {
                                   'projectOwnerID': widget.pOwnerId,
                                   'projectName': widget.projectName,
@@ -648,6 +649,7 @@ final String newtDescription = _model.taskDescriptionController.text;
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
+                                                  await _sqldatabaseHelper.closeConnection();
                                                   context
                                                       .pushNamed('ProjectPage', queryParameters: {
                                                       'projectOwnerID': widget.pOwnerId,
@@ -988,7 +990,8 @@ final String newtDescription = _model.taskDescriptionController.text;
                           alignment: const AlignmentDirectional(0.0, 0.0),
                           child: FFButtonWidget(
                             onPressed: () async {
-                              _updateTask(currentValue);
+                              await _updateTask(currentValue);
+                              await _sqldatabaseHelper.closeConnection(); 
                               context.pushNamed('ProjectPage', queryParameters: {
                                   'projectOwnerID': widget.pOwnerId,
                                   'projectName': widget.projectName,
@@ -1043,16 +1046,6 @@ final String newtDescription = _model.taskDescriptionController.text;
     if (widget.tAssigned != null) {
     selectedValue.add(widget.tAssigned!);
     }
-
-    /*(print('this is the projectName '+ widget.projectName.toString());
-    print('this is the pDescription ' + widget.pDescription.toString());
-    print('this is the pOwnerId ' + widget.pOwnerId.toString());
-    print('this is the tName ' + widget.tName.toString());
-    print('this is the tDescription ' + widget.tDescription.toString());
-    print('this is the tProgress ' + widget.tProgress.toString());
-    print('this is the tDifficulty ' + widget.tDifficulty.toString());
-    print('this is the tAssigned ' + widget.tAssigned.toString());
-    print('this is the tDue ' + widget.tDue.toString());*/
     return GestureDetector(
       onTap: () => _model.unfocusNode.canRequestFocus
           ? FocusScope.of(context).requestFocus(_model.unfocusNode)

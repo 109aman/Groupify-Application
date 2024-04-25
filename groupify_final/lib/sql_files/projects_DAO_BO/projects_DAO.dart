@@ -5,12 +5,13 @@ import 'package:groupify_final/sql_files/projects_DAO_BO/projects_BO.dart';
 import 'package:groupify_final/sql_files/members_DAO_BO/members_BO.dart';
 
 class Projects_DAO{
-  // Initialize database connectiong helper
-  final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
 
   // Insert project into projects table
   Future<void> insertProject(String? projectDueDate, TextEditingController? projectNameController, TextEditingController? projectDescriptionController) async {
+    // Initialize database connectiong helper
+    final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
     await _sqldatabaseHelper.connectToDatabase();
+
     final String? projectName = projectNameController?.text;
     final String? projectDescription = projectDescriptionController?.text;
     final String userName = currentUserDisplayName;
@@ -23,7 +24,10 @@ class Projects_DAO{
 
   // Update project in projects table with new information
   Future<void> updateProject(String? pName, String? nDescription, String? nDue) async {
+    // Initialize database connectiong helper
+    final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
     await _sqldatabaseHelper.connectToDatabase();
+
     await _sqldatabaseHelper.connection.query( 
         'UPDATE Projects SET projectDescription = ?, projectDueDate = ? WHERE projectName = ? and ownerID = ?;',
             [nDescription, nDue, pName, currentUserDisplayName]);
@@ -32,7 +36,10 @@ class Projects_DAO{
 
   // Delete all subtask and tasks associated with the project and delete project from projects table at the end
   Future<void> deleteProject(String? pOwnerID, String? pName) async {
+    // Initialize database connectiong helper
+    final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
     await _sqldatabaseHelper.connectToDatabase();
+
     await _sqldatabaseHelper.connection.query(
       'DELETE FROM inbox WHERE projectName = ? and ownerID = ?;', [pName, pOwnerID]);
     await _sqldatabaseHelper.connection.query( 
@@ -54,7 +61,10 @@ class Projects_DAO{
 
   // If not an owner, unassign current user from any tasks/subtasks and leave the project
   Future<void> leaveProject(String? pOwnerID, String? pName) async {
+    // Initialize database connectiong helper
+    final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
     await _sqldatabaseHelper.connectToDatabase();
+
     await _sqldatabaseHelper.connection.query(
       '''UPDATE Subtasks
       SET subtaskassigned = 
@@ -89,7 +99,10 @@ class Projects_DAO{
 
   // Query projects a user is involved in, populate project list, and return it
   Future<List<Project>> getProjects() async {
+    // Initialize database connectiong helper
+    final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
     await _sqldatabaseHelper.connectToDatabase();
+    
     final Members_BO _membersBO = Members_BO(); // MembersBO to gain access to members queries
     // Variables to hold information of a project
     List<Project> projects = [];

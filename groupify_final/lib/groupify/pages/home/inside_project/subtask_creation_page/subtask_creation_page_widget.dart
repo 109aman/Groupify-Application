@@ -10,8 +10,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'subtask_creation_page_model.dart';
 export 'subtask_creation_page_model.dart';
 import 'package:groupify_final/sql_database_connection.dart';
-import '/auth/firebase_auth/auth_util.dart';
-import '/groupify/pages/home/home_page/home_page_widget.dart';
 
 
 class SubtaskCreationPageWidget extends StatefulWidget {
@@ -67,17 +65,6 @@ class _SubtaskCreationPageWidgetState extends State<SubtaskCreationPageWidget> {
       String tempmem = row['userID'] as String;
       mems.add(tempmem);
     }
-    // GRAB FROM PEOPLE WHO ARE ONLY ASSIGNED TO TASK
-    /*final results = await _sqldatabaseHelper.connection.query(
-      'select taskAssigned from tasks where ownerID = ? and projectName = ? and taskName = ?;',
-      [widget.projectOwnerID, widget.projectName, widget.taskName],);
-    var temp = results.first['taskAssigned'] as String;
-    var members = temp.split(',');
-    for(final m in members){
-      mems.add(m.toString());
-    }*/
-
-    //_sqldatabaseHelper.closeConnection();
     return mems;
   }
 
@@ -284,6 +271,7 @@ class _SubtaskCreationPageWidgetState extends State<SubtaskCreationPageWidget> {
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
+                                                  await _sqldatabaseHelper.closeConnection();
                                                   context
                                                       .pushNamed('ProjectPage',
                                                       queryParameters: {
@@ -670,7 +658,8 @@ class _SubtaskCreationPageWidgetState extends State<SubtaskCreationPageWidget> {
                           alignment: const AlignmentDirectional(0.0, 0.0),
                           child: FFButtonWidget(
                             onPressed: () async {
-                              _insertSubtask(stDue);
+                              await _insertSubtask(stDue);
+                              await _sqldatabaseHelper.closeConnection();
                               context.pushNamed('ProjectPage', queryParameters: {
                                   'projectOwnerID': widget.projectOwnerID,
                                   'projectName': widget.projectName,

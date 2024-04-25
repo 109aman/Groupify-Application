@@ -12,7 +12,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'project_page_model.dart';
 export 'project_page_model.dart';
-import 'package:groupify_final/sql_database_connection.dart';
 import 'package:groupify_final/sql_files/tasks_DAO_BO/tasks_BO.dart';
 import 'package:groupify_final/sql_files/members_DAO_BO/members_BO.dart';
 import 'package:groupify_final/sql_files/subtasks_DAO_BO/subtasks_BO.dart';
@@ -31,7 +30,6 @@ class ProjectPageWidget extends StatefulWidget {
 class _ProjectPageWidgetState extends State<ProjectPageWidget> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();  // Define the scaffoldKey
   late ProjectPageModel _model;
-  late SQLDatabaseHelper _sqldatabaseHelper;
 
   final Tasks_BO _tasksBO = Tasks_BO();
   final Subtasks_BO _subtasksBO = Subtasks_BO();
@@ -44,13 +42,11 @@ class _ProjectPageWidgetState extends State<ProjectPageWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => ProjectPageModel());
-    _sqldatabaseHelper = SQLDatabaseHelper();
     _initializeData();
   }
 
   void _initializeData() async {
-    await _sqldatabaseHelper.connectToDatabase();
-    membersFuture = _membersBO.getMembersProjectPage(widget.projectName, widget.projectOwnerID); // Fetch members
+    membersFuture = _membersBO.getMembersProjectPage(widget.projectName, widget.projectOwnerID);// Fetch members
     tasksFuture = _tasksBO.getTasks(widget.projectName, widget.projectOwnerID); // Fetch tasks
     setState(() {}); // Trigger rebuild once data is being fetched
   }
@@ -65,7 +61,7 @@ class _ProjectPageWidgetState extends State<ProjectPageWidget> {
 Widget taskContainer(BuildContext context, String tName, String tDescription, double tProgress, double tDifficulty, String tAssigned, String tDue, bool subtaskflag, List<Member> tAssign){ 
     print('this is the tAssigned ' + tAssigned);
     return Padding( padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
-  child: InkWell(splashColor: Colors.transparent, focusColor: Colors.transparent, hoverColor: Colors.transparent, highlightColor: Colors.transparent,
+    child: InkWell(splashColor: Colors.transparent, focusColor: Colors.transparent, hoverColor: Colors.transparent, highlightColor: Colors.transparent,
     onTap: () async {await showModalBottomSheet(isScrollControlled: true,backgroundColor: Colors.transparent,enableDrag: false,context: context,builder: (context) {
           return GestureDetector(onTap: () => _model.unfocusNode.canRequestFocus
                 ? FocusScope.of(context).requestFocus(_model.unfocusNode)
@@ -600,7 +596,7 @@ Widget build(BuildContext context) {
                                     ),
                                     Container(width: 180.0,height: 40.0,
                                       child : FutureBuilder(
-                                          future: _membersBO.getMembersProjectPage(widget.projectName, widget.projectOwnerID), 
+                                          future: membersFuture,
                                           builder: (BuildContext context, AsyncSnapshot snapshot){
                                             if(snapshot.data == null){
                                               return SizedBox();
@@ -682,8 +678,8 @@ Widget build(BuildContext context) {
                           Container(
                             height: 565.0,
                             decoration: const BoxDecoration(),
-                            child: FutureBuilder<List<Task>>(
-                              future: _tasksBO.getTasks(widget.projectName, widget.projectOwnerID),
+                            child: FutureBuilder(
+                              future: tasksFuture,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return Center(
@@ -718,7 +714,7 @@ Widget build(BuildContext context) {
                                               task.subtaskflag,
                                               task.tAssign,
                                             ),
-                                            FutureBuilder<List<SubTask>>(
+                                            FutureBuilder(
                                             future: _subtasksBO.getSubTasks(widget.projectName, widget.projectOwnerID ,task.taskName),
                                             builder: (context, subTaskSnapshot) {
                                               if (subTaskSnapshot.connectionState == ConnectionState.waiting) {

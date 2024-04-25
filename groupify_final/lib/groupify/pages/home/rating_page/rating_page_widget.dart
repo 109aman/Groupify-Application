@@ -286,7 +286,7 @@ class _RatingPageWidgetState extends State<RatingPageWidget> { // Class to manag
                     padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 50.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center, // spacebetween
                       children: [
                         Column(
                           mainAxisSize: MainAxisSize.max,
@@ -395,7 +395,7 @@ class _RatingPageWidgetState extends State<RatingPageWidget> { // Class to manag
                               ),
                             ),
                             Container(
-                              height: 530.0,
+                              height: 400.0,
                               decoration: const BoxDecoration(),
                               child: FutureBuilder(
                                 future: finalMembersFuture, // query for list of final members
@@ -427,11 +427,14 @@ class _RatingPageWidgetState extends State<RatingPageWidget> { // Class to manag
                                         scrollDirection: Axis.vertical,
                                         itemCount: snapshot.data.length,
                                         separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 15.0),
-                                        itemBuilder: (BuildContext context, int index){
-                                          if(currentUserDisplayName == snapshot.data[index].username){ // skip current user so you cant rate yourself
+                                        itemBuilder: (BuildContext context, int index) {
+                                          // Convert both strings to lowercase for case-insensitive comparison
+                                          String currentUserLower = currentUserDisplayName.toLowerCase();
+                                          String userLower = snapshot.data[index].username.toLowerCase();
+
+                                          if (currentUserLower == userLower) { // Skip current user so you can't rate yourself
                                             return const SizedBox();
-                                          }
-                                          else { // call memberContainer widget to build a contaier for every member in list
+                                          } else { // Call memberContainer widget to build a container for every member in list
                                             return memberContainer(context, snapshot.data[index].username); 
                                           }
                                         }
@@ -445,31 +448,34 @@ class _RatingPageWidgetState extends State<RatingPageWidget> { // Class to manag
                         ),
                         Align( // Confirm button 
                           alignment: const AlignmentDirectional(0.0, 0.28),
-                          child: FFButtonWidget(
-                            onPressed: () async { // when pressed, insert ratings in rating table and go back to home page. Also leave the project
-                              await _leaveProject(widget.projectName, widget.projectOwnerID);
-                              context.pushNamed('HomePage');
-                              _membersBO.addRatings(memberRatings);
-                            },
-                            text: FFLocalizations.of(context).getText('lykhybrz' /* Confirm */,),
-                            options: FFButtonOptions(
-                              width: 130.0,
-                              height: 50.0,
-                              padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                              iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                              color: FlutterFlowTheme.of(context).primary,
-                              textStyle: FlutterFlowTheme.of(context).titleSmall
-                                  .override(
-                                    fontFamily: FlutterFlowTheme.of(context).titleSmallFamily,
-                                    color: Colors.white,
-                                    useGoogleFonts: GoogleFonts.asMap().containsKey(FlutterFlowTheme.of(context).titleSmallFamily),
-                                  ),
-                              elevation: 3.0,
-                              borderSide: const BorderSide(
-                                color: Colors.transparent,
-                                width: 1.0,
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(0, 3, 0, 1000),
+                            child: FFButtonWidget(
+                              onPressed: () async { // when pressed, insert ratings in rating table and go back to home page. Also leave the project
+                                await _leaveProject(widget.projectName, widget.projectOwnerID);
+                                context.pushNamed('HomePage');
+                                _membersBO.addRatings(memberRatings);
+                              },
+                              text: FFLocalizations.of(context).getText('lykhybrz' /* Confirm */,),
+                              options: FFButtonOptions(
+                                width: 130.0,
+                                height: 50.0,
+                                padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                                iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                color: FlutterFlowTheme.of(context).primary,
+                                textStyle: FlutterFlowTheme.of(context).titleSmall
+                                    .override(
+                                      fontFamily: FlutterFlowTheme.of(context).titleSmallFamily,
+                                      color: Colors.white,
+                                      useGoogleFonts: GoogleFonts.asMap().containsKey(FlutterFlowTheme.of(context).titleSmallFamily),
+                                    ),
+                                elevation: 3.0,
+                                borderSide: const BorderSide(
+                                  color: Colors.transparent,
+                                  width: 1.0,
+                                ),
+                                borderRadius: BorderRadius.circular(60.0),
                               ),
-                              borderRadius: BorderRadius.circular(60.0),
                             ),
                           ),
                         ),

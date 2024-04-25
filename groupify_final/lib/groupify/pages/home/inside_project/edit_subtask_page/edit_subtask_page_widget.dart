@@ -7,7 +7,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'edit_subtask_page_model.dart';
 export 'edit_subtask_page_model.dart';
 import 'package:groupify_final/sql_database_connection.dart';
@@ -74,19 +73,6 @@ class _EditSubtaskPageWidgetState extends State<EditSubtaskPageWidget> {
       String tempmem = row['userID'] as String;
       mems.add(tempmem);
     }
-
-    // GRAB FROM PEOPLE WHO ARE ONLY ASSIGNED TO TASK
-    /*final results = await _sqldatabaseHelper.connection.query(
-      'select taskAssigned from tasks where ownerID = ? and projectName = ? and taskName = ?;',
-      [widget.pOwnerId, widget.projectName, widget.tName],);
-    var temp = results.first['taskAssigned'] as String;
-    var members = temp.split(',');
-    for(var m in members){
-      m = m.toString().trim();
-      mems.add(m);
-    }*/
-
-    //_sqldatabaseHelper.closeConnection();
     return mems;
   }
 
@@ -330,6 +316,7 @@ final double? newstDifficulty;
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
+                                                  await _sqldatabaseHelper.closeConnection();
                                                   context
                                                       .pushNamed('ProjectPage', queryParameters: {
                                                       'projectOwnerID': widget.pOwnerId,
@@ -748,7 +735,8 @@ final double? newstDifficulty;
                           alignment: const AlignmentDirectional(0.0, 0.0),
                           child: FFButtonWidget(
                             onPressed: () async {
-                              _updateSubTask(currentValue);
+                              await _updateSubTask(currentValue);
+                              await _sqldatabaseHelper.closeConnection();
                               context.pushNamed('ProjectPage', queryParameters: {
                                                       'projectOwnerID': widget.pOwnerId,
                                                       'projectName': widget.projectName,

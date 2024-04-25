@@ -4,12 +4,13 @@ import 'package:groupify_final/sql_database_connection.dart';
 import 'package:groupify_final/sql_files/members_DAO_BO/members_BO.dart';
 
 class Members_DAO{
-  // Initialize database connectiong helper
-  final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
 
   // Insert owner into projectMembers table with information that was in textfield
   Future<void> insertProjectMember(TextEditingController? projectNameController,) async {
+    // Initialize database connectiong helper
+    final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
     await _sqldatabaseHelper.connectToDatabase();
+
     // Assign whats in the textfields to variables 
     final String? projectName = projectNameController?.text;
     final String userName = currentUserDisplayName;
@@ -22,7 +23,10 @@ class Members_DAO{
 
   // Get all the members involved in the project
   Future<List<Member>> getProjectMembers(String? pOwnerID, String? pName) async {
+    // Initialize database connectiong helper
+    final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
     await _sqldatabaseHelper.connectToDatabase();
+
     List<Member> members = []; // List to hold instances of Members
     double rating; // Variable to hold rating member
     final results = await _sqldatabaseHelper.connection.query(
@@ -38,7 +42,10 @@ class Members_DAO{
 
   // Insert the members that were there when the project was finished into the finalProjectMembers table 
   Future<void> insertFinalMembers(String pName, String pOwnerID) async{
+    // Initialize database connectiong helper
+    final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
     await _sqldatabaseHelper.connectToDatabase();
+
     await _sqldatabaseHelper.connection.query('DELETE FROM finalProjectMembers WHERE projectName = ? and ownerID = ?;', [pName, pOwnerID]);
     await _sqldatabaseHelper.connection.query('INSERT INTO finalProjectMembers (userId, projectName, ownerId) SELECT userId, projectName, ownerId FROM projectMembers WHERE projectName = ? AND ownerID = ?;',
                                               [pName, pOwnerID]); 
@@ -47,9 +54,12 @@ class Members_DAO{
 
   // Get all the members associated with a project from the finalProjectMembers table 
   Future<List<Member>> fetchFinalMembers(String? pOwnerID, String? pName) async {
+    // Initialize database connectiong helper
+    final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
     List<Member> members = []; // List to hold instances of Members
     double rating; // Variable to hold rating member
     await _sqldatabaseHelper.connectToDatabase();
+
     final results = await _sqldatabaseHelper.connection.query(
       'SELECT userID FROM finalProjectMembers WHERE projectName = ? and ownerID = ?;', [pName, pOwnerID]); 
     for(final row in results){
@@ -63,7 +73,10 @@ class Members_DAO{
 
   // Insert ratings for each user in the project to userRating table
   Future<void> insertMemberRatings(Map<String, double> memberRatings) async {
+    // Initialize database connectiong helper
+    final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
     await _sqldatabaseHelper.connectToDatabase();
+
     for (var member in memberRatings.entries) { // Iterate through map of users 
       await _sqldatabaseHelper.connection.query('Insert userRating (userID, rating) Values (?, ?);',
                                                           [member.key, member.value]); 
@@ -73,7 +86,10 @@ class Members_DAO{
 
   // Get all the ratings for a user in the userRatings table and return the average
   Future<double> getRating(String username) async {
+    // Initialize database connectiong helper
+    final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
     await _sqldatabaseHelper.connectToDatabase();
+
     double rating = 0;
     double sum = 0;
     double temp = 0;
@@ -90,13 +106,15 @@ class Members_DAO{
     return rating;
   }
 
-    Future<List<Member>> getMembers(projectName, projectOwnerID) async {
+  Future<List<Member>> getMembers(projectName, projectOwnerID) async {
+    // Initialize database connectiong helper
+    final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
     await _sqldatabaseHelper.connectToDatabase();
+    
     List<Member> members = [];
     double rating;
     double sum;
     double temp;
-
     final results = await _sqldatabaseHelper.connection.query('SELECT userID FROM projectMembers WHERE projectName = ? and ownerID = ?;',
                                                           [projectName, projectOwnerID]); 
     print('GOT PROJECT MEMBERS');
@@ -106,7 +124,7 @@ class Members_DAO{
       sum = 0;
       temp = 0;
       final results2 = await _sqldatabaseHelper.connection.query('SELECT rating FROM userRating WHERE userID = ?;',
-                                                          [tempUserName]); 
+                                                          [tempUserName]);  
       for(final row in results2){
         temp = row['rating'] as double;
         sum += temp;

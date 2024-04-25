@@ -72,7 +72,7 @@ class _HomePageWidgetState extends State<HomePageWidget> { // Class to manage th
             });
           }
           else{  // project is done, add all members as final members and go to rating page
-             await _membersBO.addFinalMembers(pName, pOwnerID);
+            await _membersBO.addFinalMembers(pName, pOwnerID);
             context.pushNamed('RatingPage', queryParameters: {
             'projectOwnerID': pOwnerID,
             'projectName': pName,

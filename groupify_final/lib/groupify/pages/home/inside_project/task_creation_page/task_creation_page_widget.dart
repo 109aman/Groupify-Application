@@ -66,7 +66,6 @@ Future<List<String>> _getMembers() async {
     String tempmem = row['userID'] as String;
     mems.add(tempmem);
   }
-  //_sqldatabaseHelper.closeConnection();
   return mems;
 }
 
@@ -273,6 +272,7 @@ String? tDue = '';
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
+                                                  await _sqldatabaseHelper.closeConnection();
                                                   context
                                                       .pushNamed('ProjectPage',
                                                       queryParameters: {
@@ -660,6 +660,7 @@ String? tDue = '';
                           child: FFButtonWidget(
                             onPressed: () async {
                               await _insertTask(tDue);
+                              await _sqldatabaseHelper.closeConnection();
                               context.pushNamed('ProjectPage', queryParameters: {
                                   'projectOwnerID': widget.projectOwnerID,
                                   'projectName': widget.projectName,

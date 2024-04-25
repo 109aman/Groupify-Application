@@ -113,7 +113,8 @@ class _AreYouSureTaskWidgetState extends State<AreYouSureTaskWidget> {
                 children: [
                   FFButtonWidget(
                     onPressed: () async {
-                      _deleteTask(widget.projectName, widget.pOwnerId, widget.tName);
+                      await _deleteTask(widget.projectName, widget.pOwnerId, widget.tName);
+                      await _sqldatabaseHelper.closeConnection();
                       context.pushNamed('ProjectPage', queryParameters: {
                                   'projectOwnerID': widget.pOwnerId,
                                   'projectName': widget.projectName,
@@ -149,6 +150,7 @@ class _AreYouSureTaskWidgetState extends State<AreYouSureTaskWidget> {
                   ),
                   FFButtonWidget(
                     onPressed: () async {
+                      await _sqldatabaseHelper.closeConnection();
                       context.safePop();
                     },
                     text: FFLocalizations.of(context).getText(
