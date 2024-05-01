@@ -46,8 +46,7 @@ class Members_DAO{
     final SQLDatabaseHelper _sqldatabaseHelper = SQLDatabaseHelper();
     await _sqldatabaseHelper.connectToDatabase();
 
-    await _sqldatabaseHelper.connection.query('DELETE FROM finalProjectMembers WHERE projectName = ? and ownerID = ?;', [pName, pOwnerID]);
-    await _sqldatabaseHelper.connection.query('INSERT INTO finalProjectMembers (userId, projectName, ownerId) SELECT userId, projectName, ownerId FROM projectMembers WHERE projectName = ? AND ownerID = ?;',
+    await _sqldatabaseHelper.connection.query('INSERT IGNORE INTO finalProjectMembers (userId, projectName, ownerId) SELECT userId, projectName, ownerId FROM projectMembers WHERE projectName = ? AND ownerID = ?;',
                                               [pName, pOwnerID]); 
     await _sqldatabaseHelper.closeConnection();     
   }
